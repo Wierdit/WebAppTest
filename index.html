@@ -39,6 +39,7 @@
             overflow-x: hidden;
         }
 
+        /* --- HEADER --- */
         header {
             position: fixed;
             top: 0;
@@ -60,6 +61,7 @@
             cursor: pointer;
         }
 
+        /* Основные стили для навигации (десктоп) */
         #main-nav {
             display: flex;
             gap: 30px;
@@ -94,6 +96,7 @@
             transition: var(--transition);
         }
 
+        /* --- HERO SECTION --- */
         .hero {
             position: relative;
             height: 100vh;
@@ -147,6 +150,7 @@
             background-color: #b00218;
         }
 
+        /* --- SECTION COMMON --- */
         section {
             padding: 100px 10%;
             opacity: 0;
@@ -167,6 +171,7 @@
             margin-bottom: 50px;
         }
 
+        /* --- STEPS SECTION --- */
         .steps-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -198,6 +203,7 @@
             color: var(--primary-blue);
         }
 
+        /* --- PRIZES SECTION --- */
         .prizes-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -244,6 +250,7 @@
             margin-bottom: 10px;
         }
 
+        /* --- AUTH SECTION --- */
         .auth-container {
             max-width: 450px;
             margin: 0 auto;
@@ -300,6 +307,7 @@
             background: #112b45;
         }
 
+        /* --- USER DASHBOARD --- */
         #user-dashboard {
             display: none;
             max-width: 800px;
@@ -352,6 +360,7 @@
             margin: 20px auto;
         }
 
+        /* --- FOOTER --- */
         footer {
             position: relative;
             padding: 80px 10% 40px;
@@ -383,6 +392,7 @@
             padding-top: 20px;
         }
 
+        /* --- MOBILE RESPONSIVENESS --- */
         @media (max-width: 768px) {
             #main-nav {
                 display: none;
@@ -448,6 +458,7 @@
         </div>
     </header>
 
+    <!-- HERO -->
     <section class="hero visible" style="opacity: 1; transform: none;">
         <div class="hero-content">
             <h1>Выиграйте роскошные <br>Городецкие призы!</h1>
@@ -456,6 +467,7 @@
         </div>
     </section>
 
+    <!-- HOW TO -->
     <section id="how-to" class="section">
         <h2 class="section-title">Как участвовать</h2>
         <div class="steps-grid">
@@ -482,6 +494,7 @@
         </div>
     </section>
 
+    <!-- PRIZES -->
     <section id="prizes" class="section">
         <h2 class="section-title">Призовой фонд</h2>
         <div class="prizes-grid">
@@ -509,6 +522,7 @@
         </div>
     </section>
 
+    <!-- AUTH / DASHBOARD -->
     <section id="auth" class="section">
         <div id="auth-box" class="auth-container">
             <div id="step-1">
@@ -539,13 +553,15 @@
             <h3 style="margin-bottom: 20px;">Загрузить новый чек</h3>
             <div class="upload-options">
                 <div class="upload-btn" onclick="startScanner()">📷 Сканировать QR-код</div>
-                <div class="upload-btn" onclick="simulateUpload()">🖼️ Загрузить фото</div>
+                <div class="upload-btn" onclick="document.getElementById('file-input').click()">🖼️ Загрузить фото</div>
                 <div class="upload-btn" onclick="manualInput()">✍️ Ввести вручную</div>
             </div>
+            <input type="file" id="file-input" style="display: none;" accept="image/png, image/jpeg, image/webp" onchange="handleFileUpload(event)">
             <div id="reader"></div>
         </div>
     </section>
 
+    <!-- FOOTER -->
     <footer>
         <div class="footer-content">
             <div class="footer-contacts">
@@ -555,14 +571,13 @@
             </div>
             <div class="footer-legal">
                 <p>&copy; 2023 ООО «Городецкое молоко». Все права защищены. <br>
-                    <a href="#" style="color: var(--primary-blue);">Политика конфиденциальности</a>
-                </p>
+                <a href="#" style="color: var(--primary-blue);">Политика конфиденциальности</a></p>
             </div>
         </div>
     </footer>
 
     <script>
-        // Scroll reveal
+        // --- LOGIC: SCROLL REVEAL ---
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) entry.target.classList.add('visible');
@@ -571,7 +586,7 @@
 
         document.querySelectorAll('section').forEach(section => observer.observe(section));
 
-        // Navigation
+        // --- LOGIC: NAVIGATION ---
         function scrollToSection(id) {
             document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
         }
@@ -581,7 +596,7 @@
             nav.classList.toggle('open');
         }
 
-        // Закрытие меню, Enter, автофокус
+        // --- Закрытие меню при клике на пункт, обработка Enter, автофокус ---
         document.addEventListener('DOMContentLoaded', function () {
             // Закрытие меню при клике на ссылку
             const navLinks = document.querySelectorAll('#main-nav a');
@@ -601,7 +616,6 @@
                         verifyPhone();
                     }
                 });
-                // Убран автофокус на поле телефона
             }
 
             // Нажатие Enter в поле кода → подтвердить
@@ -616,7 +630,7 @@
             }
         });
 
-        // Auth
+        // --- LOGIC: AUTHENTICATION ---
         let userPhone = "";
 
         function verifyPhone() {
@@ -648,7 +662,7 @@
             document.getElementById('login-nav').style.display = 'none';
         }
 
-        // Points & localStorage
+        // --- LOGIC: POINTS & LOCALSTORAGE ---
         function updatePoints() {
             let points = localStorage.getItem('userPoints') || 0;
             document.getElementById('user-points').innerText = `${points} баллов`;
@@ -661,41 +675,116 @@
             updatePoints();
         }
 
-        // Checks simulation
-        function simulateUpload() {
-            alert("Загрузка файла... Проверка чека...");
-            setTimeout(() => {
-                alert("Чек успешно проверен! Вам начислено 10 баллов.");
-                addPoints(10);
-            }, 1500);
+        // --- Функция для извлечения уникального идентификатора чека из QR-кода ---
+        function getUniqueCheckId(qrText) {
+            try {
+                // Парсим строку как URL-параметры (если они есть)
+                const params = new URLSearchParams(qrText);
+                
+                // Собираем ключевые поля (если они есть)
+                const fn = params.get('fn') || '';
+                const i = params.get('i') || '';
+                const fp = params.get('fp') || '';
+                const t = params.get('t') || '';
+                const s = params.get('s') || '';
+                
+                // Если есть хотя бы fn и i и fp — формируем ключ
+                if (fn && i && fp) {
+                    return `${fn}_${i}_${fp}`;
+                }
+                
+                // Если нет — используем весь текст как ключ (обрезаем до 100 символов)
+                return qrText.substring(0, 100);
+            } catch (e) {
+                // Если не удалось распарсить — используем весь текст
+                return qrText.substring(0, 100);
+            }
         }
 
+        // --- LOGIC: FILE UPLOAD & QR RECOGNITION (с защитой от повторов) ---
+        async function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const html5QrCode = new Html5Qrcode("reader");
+
+            try {
+                const decodedText = await html5QrCode.scanFile(file, true);
+                
+                // Извлекаем уникальный идентификатор чека
+                const checkId = getUniqueCheckId(decodedText);
+                
+                // Проверяем, не загружали ли уже этот чек
+                const loadedChecks = JSON.parse(localStorage.getItem('loadedChecks') || '[]');
+                if (loadedChecks.includes(checkId)) {
+                    alert("⚠️ Этот чек уже был загружен ранее! Баллы не начислены.");
+                    return;
+                }
+                
+                // Сохраняем идентификатор в список загруженных чеков
+                loadedChecks.push(checkId);
+                localStorage.setItem('loadedChecks', JSON.stringify(loadedChecks));
+                
+                alert(`✅ QR-код успешно распознан из файла!\nТекст: ${decodedText}\n\nВам начислено 10 баллов.`);
+                addPoints(10);
+            } catch (err) {
+                alert("❌ QR-код не найден на изображении. Пожалуйста, убедитесь, что фото четкое и QR-код виден полностью.");
+            } finally {
+                event.target.value = "";
+            }
+        }
+
+        // --- LOGIC: MANUAL INPUT (с защитой от повторов) ---
         function manualInput() {
             const checkNum = prompt("Введите номер чека:");
             if (checkNum) {
-                alert("Проверка номера...");
+                const checkId = checkNum.trim();
+                const loadedChecks = JSON.parse(localStorage.getItem('loadedChecks') || '[]');
+                if (loadedChecks.includes(checkId)) {
+                    alert("⚠️ Этот чек уже был загружен ранее! Баллы не начислены.");
+                    return;
+                }
+                loadedChecks.push(checkId);
+                localStorage.setItem('loadedChecks', JSON.stringify(loadedChecks));
+
+                alert("⏳ Проверка номера...");
                 setTimeout(() => {
-                    alert("Чек найден! Вам начислено 10 баллов.");
+                    alert("✅ Чек найден! Вам начислено 10 баллов.");
                     addPoints(10);
                 }, 1000);
             }
         }
 
-        // QR Scanner
+        // --- LOGIC: CAMERA SCANNER (с защитой от повторов) ---
         function startScanner() {
             const html5QrCode = new Html5Qrcode("reader");
             html5QrCode.start(
                 { facingMode: "environment" },
                 { fps: 10, qrbox: { width: 250, height: 250 } },
                 (decodedText) => {
-                    alert(`QR-код успешно считан: ${decodedText}. Вам начислено 10 баллов.`);
+                    // Извлекаем уникальный идентификатор чека
+                    const checkId = getUniqueCheckId(decodedText);
+                    
+                    // Проверяем, не загружали ли уже этот чек
+                    const loadedChecks = JSON.parse(localStorage.getItem('loadedChecks') || '[]');
+                    if (loadedChecks.includes(checkId)) {
+                        alert("⚠️ Этот чек уже был загружен ранее! Баллы не начислены.");
+                        html5QrCode.stop();
+                        return;
+                    }
+                    
+                    // Сохраняем идентификатор в список загруженных чеков
+                    loadedChecks.push(checkId);
+                    localStorage.setItem('loadedChecks', JSON.stringify(loadedChecks));
+                    
+                    alert(`✅ QR-код успешно считан через камеру!\nТекст: ${decodedText}\n\nВам начислено 10 баллов.`);
                     addPoints(10);
                     html5QrCode.stop();
                 },
                 (errorMessage) => {
                     // ignore errors
                 }
-            ).catch(err => alert("Ошибка доступа к камере: " + err));
+            ).catch(err => alert("❌ Ошибка доступа к камере: " + err));
         }
     </script>
 </body>
