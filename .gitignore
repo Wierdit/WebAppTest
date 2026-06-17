@@ -4,3 +4,4 @@ node_modules/
 *.log
 .vscode/
 .vercel
+assets/extra/
