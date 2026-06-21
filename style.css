@@ -10,7 +10,7 @@ html { scroll-behavior: smooth; }
 body {
     font-family: 'Inter', sans-serif;
     color: var(--primary-blue);
-    background-image: url('assets/flowers.webp');
+    background-image: url('assets/flowers.png');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
