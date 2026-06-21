@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Городецкие Призы — Акция Городецкого молочного завода</title>
+    <title>Городецкие Призы – Акция Городецкого молочного завода</title>
 
     <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-
     <!-- HTML5 QR Code Scanner CDN -->
     <script src="https://unpkg.com/html5-qrcode"></script>
+    <!-- Supabase JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         :root {
@@ -20,17 +20,8 @@
             --white: #ffffff;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
+        html { scroll-behavior: smooth; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Inter', sans-serif;
             color: var(--primary-blue);
@@ -42,7 +33,6 @@
             line-height: 1.6;
             overflow-x: hidden;
         }
-
         /* --- HEADER --- */
         header {
             position: fixed;
@@ -58,20 +48,12 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             backdrop-filter: blur(10px);
         }
-
-        .logo img {
-            height: 55px;
-            display: block;
-            cursor: pointer;
-        }
-
-        /* Основные стили для навигации (десктоп) */
+        .logo img { height: 55px; display: block; cursor: pointer; }
         #main-nav {
             display: flex;
             gap: 30px;
             align-items: center;
         }
-
         #main-nav a {
             text-decoration: none;
             color: var(--primary-blue);
@@ -80,18 +62,13 @@
             transition: var(--transition);
             cursor: pointer;
         }
-
-        #main-nav a:hover {
-            color: var(--primary-red);
-        }
-
+        #main-nav a:hover { color: var(--primary-red); }
         .burger {
             display: none;
             cursor: pointer;
             flex-direction: column;
             gap: 5px;
         }
-
         .burger span {
             width: 25px;
             height: 3px;
@@ -99,8 +76,7 @@
             border-radius: 2px;
             transition: var(--transition);
         }
-
-        /* --- HERO SECTION --- */
+        /* --- HERO --- */
         .hero {
             position: relative;
             height: 100vh;
@@ -113,12 +89,7 @@
             padding: 0 20px;
             margin-top: 80px;
         }
-
-        .hero-content {
-            max-width: 900px;
-            z-index: 2;
-        }
-
+        .hero-content { max-width: 900px; z-index: 2; }
         .hero h1 {
             font-size: clamp(2.5rem, 6vw, 4.5rem);
             font-weight: 800;
@@ -126,13 +97,11 @@
             margin-bottom: 1.5rem;
             line-height: 1.1;
         }
-
         .hero p {
             font-size: 1.2rem;
             margin-bottom: 2.5rem;
             color: var(--primary-blue);
         }
-
         .btn-main {
             background-color: var(--primary-red);
             color: var(--white);
@@ -147,13 +116,11 @@
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(208, 2, 27, 0.3);
         }
-
         .btn-main:hover {
             transform: translateY(-3px);
             box-shadow: 0 6px 20px rgba(208, 2, 27, 0.4);
             background-color: #b00218;
         }
-
         /* --- SECTION COMMON --- */
         section {
             padding: 100px 10%;
@@ -161,12 +128,7 @@
             transform: translateY(30px);
             transition: all 0.8s ease-out;
         }
-
-        section.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
+        section.visible { opacity: 1; transform: translateY(0); }
         .section-title {
             text-align: center;
             font-size: 2.5rem;
@@ -174,14 +136,12 @@
             color: var(--primary-blue);
             margin-bottom: 50px;
         }
-
-        /* --- STEPS SECTION --- */
+        /* --- STEPS --- */
         .steps-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 30px;
         }
-
         .step-card {
             text-align: center;
             padding: 30px;
@@ -190,30 +150,18 @@
             transition: var(--transition);
             border: 1px solid #eee;
         }
-
         .step-card:hover {
             transform: translateY(-10px);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
         }
-
-        .step-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            display: block;
-        }
-
-        .step-card h3 {
-            margin-bottom: 10px;
-            color: var(--primary-blue);
-        }
-
-        /* --- PRIZES SECTION --- */
+        .step-icon { font-size: 3rem; margin-bottom: 15px; display: block; }
+        .step-card h3 { margin-bottom: 10px; color: var(--primary-blue); }
+        /* --- PRIZES --- */
         .prizes-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 30px;
         }
-
         .prize-card {
             background: var(--white);
             border-radius: 24px;
@@ -223,12 +171,10 @@
             text-align: center;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
         }
-
         .prize-card:hover {
             transform: scale(1.03);
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
         }
-
         .prize-img {
             width: 100%;
             height: 200px;
@@ -237,24 +183,14 @@
             align-items: center;
             justify-content: center;
         }
-
-        .prize-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .prize-info {
-            padding: 25px;
-        }
-
+        .prize-img img { width: 100%; height: 100%; object-fit: cover; }
+        .prize-info { padding: 25px; }
         .prize-info h3 {
             font-size: 1.5rem;
             color: var(--primary-blue);
             margin-bottom: 10px;
         }
-
-        /* --- AUTH SECTION --- */
+        /* --- AUTH --- */
         .auth-container {
             max-width: 450px;
             margin: 0 auto;
@@ -264,23 +200,13 @@
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
-
-        .auth-container h2 {
-            margin-bottom: 20px;
-            color: var(--primary-blue);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
+        .auth-container h2 { margin-bottom: 20px; color: var(--primary-blue); }
+        .form-group { margin-bottom: 20px; text-align: left; }
         .form-group label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
         }
-
         .form-group input {
             width: 100%;
             padding: 15px;
@@ -290,11 +216,7 @@
             outline: none;
             transition: var(--transition);
         }
-
-        .form-group input:focus {
-            border-color: var(--primary-blue);
-        }
-
+        .form-group input:focus { border-color: var(--primary-blue); }
         .auth-btn {
             width: 100%;
             padding: 15px;
@@ -306,11 +228,7 @@
             cursor: pointer;
             transition: var(--transition);
         }
-
-        .auth-btn:hover {
-            background: #112b45;
-        }
-
+        .auth-btn:hover { background: #112b45; }
         /* --- USER DASHBOARD --- */
         #user-dashboard {
             display: none;
@@ -319,7 +237,6 @@
             text-align: center;
             background: var(--white);
         }
-
         .welcome-box {
             background: var(--white);
             padding: 30px;
@@ -327,21 +244,18 @@
             margin-bottom: 40px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
         }
-
         .points-badge {
             font-size: 2rem;
             font-weight: 800;
             color: var(--primary-red);
             margin: 15px 0;
         }
-
         .upload-options {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             margin-top: 30px;
         }
-
         .upload-btn {
             padding: 20px;
             background: var(--white);
@@ -352,18 +266,11 @@
             font-weight: 600;
             color: var(--primary-blue);
         }
-
         .upload-btn:hover {
             background: #eef2f7;
             border-style: solid;
         }
-
-        #reader {
-            width: 100%;
-            max-width: 500px;
-            margin: 20px auto;
-        }
-
+        #reader { width: 100%; max-width: 500px; margin: 20px auto; }
         /* --- FOOTER --- */
         footer {
             position: relative;
@@ -372,31 +279,21 @@
             color: var(--primary-blue);
             text-align: center;
         }
-
         .footer-content {
             position: relative;
             z-index: 2;
             max-width: 1000px;
             margin: 0 auto;
         }
-
-        .footer-contacts {
-            margin-bottom: 30px;
-            font-weight: 500;
-        }
-
-        .footer-contacts p {
-            margin: 5px 0;
-        }
-
+        .footer-contacts { margin-bottom: 30px; font-weight: 500; }
+        .footer-contacts p { margin: 5px 0; }
         .footer-legal {
             font-size: 0.8rem;
             opacity: 0.8;
             border-top: 1px solid rgba(0, 0, 0, 0.1);
             padding-top: 20px;
         }
-
-        /* --- MOBILE RESPONSIVENESS --- */
+        /* --- MOBILE --- */
         @media (max-width: 768px) {
             #main-nav {
                 display: none;
@@ -411,11 +308,7 @@
                 flex-direction: column;
                 align-items: center;
             }
-
-            #main-nav.open {
-                display: flex !important;
-            }
-
+            #main-nav.open { display: flex !important; }
             #main-nav a {
                 font-size: 1.1rem;
                 padding: 12px 0;
@@ -424,373 +317,321 @@
                 text-align: center;
                 border-bottom: 1px solid #eee;
             }
-
-            #main-nav a:last-child {
-                border-bottom: none;
-            }
-
-            .burger {
-                display: flex;
-            }
-
-            .hero h1 {
-                font-size: 2.2rem;
-            }
-
-            section {
-                padding: 60px 5%;
-            }
+            #main-nav a:last-child { border-bottom: none; }
+            .burger { display: flex; }
+            .hero h1 { font-size: 2.2rem; }
+            section { padding: 60px 5%; }
         }
     </style>
 </head>
 
 <body>
 
-    <header>
-        <div class="logo">
-            <img src="assets/logo.png" alt="Городецкое молоко">
-        </div>
-        <nav id="main-nav">
-            <a href="#how-to">Как участвовать</a>
-            <a href="#prizes">Призы</a>
-            <a href="#auth" id="login-nav">Войти</a>
-        </nav>
-        <div class="burger" onclick="toggleMenu()">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-    </header>
+<header>
+    <div class="logo"><img src="assets/logo.png" alt="Городецкое молоко"></div>
+    <nav id="main-nav">
+        <a href="#how-to">Как участвовать</a>
+        <a href="#prizes">Призы</a>
+        <a href="#auth" id="login-nav">Войти</a>
+    </nav>
+    <div class="burger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+</header>
 
-    <!-- HERO -->
-    <section class="hero visible" style="opacity: 1; transform: none;">
-        <div class="hero-content">
-            <h1>Выиграйте роскошные <br>Городецкие призы!</h1>
-            <p>Покупайте продукцию «Городецкий молочный завод», копите баллы и становитесь обладателями уникальных наград.</p>
-            <button class="btn-main" onclick="scrollToSection('auth')">Участвовать сейчас!</button>
+<!-- HERO -->
+<section class="hero visible" style="opacity:1;transform:none;">
+    <div class="hero-content">
+        <h1>Выиграйте роскошные <br>Городецкие призы!</h1>
+        <p>Покупайте продукцию «Городецкий молочный завод», копите баллы и становитесь обладателями уникальных наград.</p>
+        <button class="btn-main" onclick="scrollToSection('auth')">Участвовать сейчас!</button>
+    </div>
+</section>
+
+<!-- HOW TO -->
+<section id="how-to" class="section">
+    <h2 class="section-title">Как участвовать</h2>
+    <div class="steps-grid">
+        <div class="step-card"><span class="step-icon">🥛</span><h3>Покупайте</h3><p>Приобретайте любую продукцию Городецкого молочного завода</p></div>
+        <div class="step-card"><span class="step-icon">📸</span><h3>Загружайте</h3><p>Загрузите фото чека или отсканируйте QR-код</p></div>
+        <div class="step-card"><span class="step-icon">⭐</span><h3>Копите</h3><p>Получайте баллы за каждую покупку</p></div>
+        <div class="step-card"><span class="step-icon">🏆</span><h3>Следите за розыгрышем</h3><p>Ждите результатов розыгрышей призов</p></div>
+    </div>
+</section>
+
+<!-- PRIZES -->
+<section id="prizes" class="section">
+    <h2 class="section-title">Призовой фонд</h2>
+    <div class="prizes-grid">
+        <div class="prize-card">
+            <div class="prize-img"><img src="assets/prizes/super_prize.png" alt="Супер-приз"></div>
+            <div class="prize-info"><h3>Супер-приз</h3><p>Авторский расписной сундук ручной работы от городецких мастеров</p></div>
         </div>
-    </section>
-
-    <!-- HOW TO -->
-    <section id="how-to" class="section">
-        <h2 class="section-title">Как участвовать</h2>
-        <div class="steps-grid">
-            <div class="step-card">
-                <span class="step-icon">🥛</span>
-                <h3>Покупайте</h3>
-                <p>Приобретайте любую продукцию Городецкого молочного завода</p>
-            </div>
-            <div class="step-card">
-                <span class="step-icon">📸</span>
-                <h3>Загружайте</h3>
-                <p>Загрузите фото чека или отсканируйте QR-код</p>
-            </div>
-            <div class="step-card">
-                <span class="step-icon">⭐</span>
-                <h3>Копите</h3>
-                <p>Получайте баллы за каждую покупку</p>
-            </div>
-            <div class="step-card">
-                <span class="step-icon">🏆</span>
-                <h3>Следите за розыгрышем</h3>
-                <p>Ждите результатов розыгрышей призов</p>
-            </div>
+        <div class="prize-card">
+            <div class="prize-img"><img src="assets/prizes/prize.png" alt="Приз"></div>
+            <div class="prize-info"><h3>Лимитированный подарок</h3><p>Набор уникальных сувенирных предметов для самых активных участников</p></div>
         </div>
-    </section>
-
-    <!-- PRIZES -->
-    <section id="prizes" class="section">
-        <h2 class="section-title">Призовой фонд</h2>
-        <div class="prizes-grid">
-            <div class="prize-card">
-                <div class="prize-img"><img src="assets/prizes/super_prize.png" alt="Супер-приз"></div>
-                <div class="prize-info">
-                    <h3>Супер-приз</h3>
-                    <p>Авторский расписной сундук ручной работы от городецких мастеров</p>
-                </div>
-            </div>
-            <div class="prize-card">
-                <div class="prize-img"><img src="assets/prizes/prize.png" alt="Приз"></div>
-                <div class="prize-info">
-                    <h3>Лимитированный подарок</h3>
-                    <p>Чайный сервиз с городецкой росписью для самых активных участников</p>
-                </div>
-            </div>
-            <div class="prize-card">
-                <div class="prize-img"><img src="assets/prizes/other_prize.png" alt="Подарочный набор"></div>
-                <div class="prize-info">
-                    <h3>Сувенирный набор</h3>
-                    <p>Победителям еженедельных розыгрышей за покупку продукции</p>
-                </div>
-            </div>
+        <div class="prize-card">
+            <div class="prize-img"><img src="assets/prizes/other_prize.png" alt="Подарочный набор"></div>
+            <div class="prize-info"><h3>Чайный сервиз</h3><p>Победителям еженедельных розыгрышей за покупку продукции</p></div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- AUTH / DASHBOARD -->
-    <section id="auth" class="section">
-        <div id="auth-box" class="auth-container">
-            <div id="step-1">
-                <h2>Вход в систему</h2>
-                <div class="form-group">
-                    <label>Номер телефона</label>
-                    <input type="tel" id="phone" placeholder="+7 (___) ___-__-__">
-                </div>
-                <button class="auth-btn" onclick="verifyPhone()">Получить код</button>
+<!-- AUTH / DASHBOARD -->
+<section id="auth" class="section">
+    <div id="auth-box" class="auth-container">
+        <div id="step-1">
+            <h2>Вход в систему</h2>
+            <div class="form-group">
+                <label>E‑mail</label>
+                <input type="email" id="email" placeholder="example@domain.com">
             </div>
-            <div id="step-2" style="display: none;">
-                <h2>Подтверждение</h2>
-                <p style="margin-bottom: 15px;">Введите код из сообщения (тест: 1234)</p>
-                <div class="form-group">
-                    <input type="text" id="code" placeholder="0000">
-                </div>
-                <button class="auth-btn" onclick="confirmCode()">Войти</button>
-            </div>
+            <button class="auth-btn" onclick="requestOtp()">Получить код</button>
         </div>
-
-        <div id="user-dashboard">
-            <div class="welcome-box">
-                <h2 id="user-greeting">Привет!</h2>
-                <p>Ваш текущий баланс:</p>
-                <div class="points-badge" id="user-points">0 баллов</div>
+        <div id="step-2" style="display:none;">
+            <h2>Подтверждение</h2>
+            <p style="margin-bottom:15px;">Введите код из письма</p>
+            <div class="form-group">
+                <input type="text" id="code" placeholder="000000">
             </div>
-
-            <h3 style="margin-bottom: 20px;">Загрузить новый чек</h3>
-            <div class="upload-options">
-                <div class="upload-btn" onclick="startScanner()">📷 Сканировать QR-код</div>
-                <div class="upload-btn" onclick="document.getElementById('file-input').click()">🖼️ Загрузить фото</div>
-                <div class="upload-btn" onclick="manualInput()">✍️ Ввести вручную</div>
-            </div>
-            <input type="file" id="file-input" style="display: none;" accept="image/png, image/jpeg, image/webp" onchange="handleFileUpload(event)">
-            <div id="reader"></div>
+            <button class="auth-btn" onclick="confirmOtp()">Войти</button>
         </div>
-    </section>
+    </div>
 
-    <!-- FOOTER -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-contacts">
-                <p>📍 606503, Нижегородская обл., г. Городец, ул. Республиканская, 91</p>
-                <p>📞 +7 (831) 423-06-47</p>
-                <p>✉️ moloko-gorodec@sinn.ru</p>
-            </div>
-            <div class="footer-legal">
-                <p>&copy; 2023 ООО «Городецкое молоко». Все права защищены. <br>
-                <a href="#" style="color: var(--primary-blue);">Политика конфиденциальности</a></p>
-            </div>
+    <div id="user-dashboard">
+        <div class="welcome-box">
+            <h2 id="user-greeting">Привет!</h2>
+            <p>Ваш текущий баланс:</p>
+            <div class="points-badge" id="user-points">0 баллов</div>
         </div>
-    </footer>
+        <h3 style="margin-bottom:20px;">Загрузить новый чек</h3>
+        <div class="upload-options">
+            <div class="upload-btn" onclick="startScanner()">📷 Сканировать QR‑код</div>
+            <div class="upload-btn" onclick="document.getElementById('file-input').click()">🖼️ Загрузить фото</div>
+            <div class="upload-btn" onclick="manualInput()">✍️ Ввести вручную</div>
+        </div>
+        <input type="file" id="file-input" style="display:none;" accept="image/png,image/jpeg,image/webp" onchange="handleFileUpload(event)">
+        <div id="reader"></div>
+    </div>
+</section>
 
-    <script>
-        // --- LOGIC: SCROLL REVEAL ---
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('visible');
+<!-- FOOTER -->
+<footer>
+    <div class="footer-content">
+        <div class="footer-contacts">
+            <p>📍 606503, Нижегородская обл., г. Городец, ул. Республиканская, 91</p>
+            <p>📞 +7 (831) 423-06-47</p>
+            <p>✉️ moloko-gorodec@sinn.ru</p>
+        </div>
+        <div class="footer-legal">
+            <p>&copy; 2023 ООО «Городецкое молоко». Все права защищены. <br>
+            <a href="#" style="color: var(--primary-blue);">Политика конфиденциальности</a></p>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // ==================== SUPABASE CLIENT ====================
+    const SUPABASE_URL = 'https://axavmdnytvkjyjyytgsy.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_Rpb8DobkahQP6NBuWcoDaQ_BTp5eMH3';
+
+    // Переименовали переменную, чтобы избежать конфликта с глобальным supabase из CDN
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // ==================== UI HELPERS ====================
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('section').forEach(s => observer.observe(s));
+
+    function scrollToSection(id) { document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
+    function toggleMenu() { document.getElementById('main-nav').classList.toggle('open'); }
+
+    // ==================== AUTH ====================
+    let userEmail = '';
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Закрытие меню при клике
+        document.querySelectorAll('#main-nav a').forEach(l => {
+            l.addEventListener('click', () => {
+                document.getElementById('main-nav').classList.remove('open');
             });
-        }, { threshold: 0.1 });
-
-        document.querySelectorAll('section').forEach(section => observer.observe(section));
-
-        // --- LOGIC: NAVIGATION ---
-        function scrollToSection(id) {
-            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function toggleMenu() {
-            const nav = document.getElementById('main-nav');
-            nav.classList.toggle('open');
-        }
-
-        // --- Закрытие меню при клике на пункт, обработка Enter, автофокус ---
-        document.addEventListener('DOMContentLoaded', function () {
-            // Закрытие меню при клике на ссылку
-            const navLinks = document.querySelectorAll('#main-nav a');
-            navLinks.forEach(link => {
-                link.addEventListener('click', function (e) {
-                    const nav = document.getElementById('main-nav');
-                    nav.classList.remove('open');
-                });
-            });
-
-            // Нажатие Enter в поле телефона → получить код
-            const phoneInput = document.getElementById('phone');
-            if (phoneInput) {
-                phoneInput.addEventListener('keydown', function (e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        verifyPhone();
-                    }
-                });
-            }
-
-            // Нажатие Enter в поле кода → подтвердить
-            const codeInput = document.getElementById('code');
-            if (codeInput) {
-                codeInput.addEventListener('keydown', function (e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        confirmCode();
-                    }
-                });
-            }
         });
 
-        // --- LOGIC: AUTHENTICATION ---
-        let userPhone = "";
-
-        function verifyPhone() {
-            const phone = document.getElementById('phone').value;
-            if (phone.length < 10) {
-                alert("Пожалуйста, введите корректный номер");
-                return;
-            }
-            userPhone = phone;
-            document.getElementById('step-1').style.display = 'none';
-            document.getElementById('step-2').style.display = 'block';
-            document.getElementById('code').focus();
+        // Enter в поле email
+        const emailInput = document.getElementById('email');
+        if (emailInput) {
+            emailInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') { e.preventDefault(); requestOtp(); }
+            });
         }
 
-        function confirmCode() {
-            const code = document.getElementById('code').value;
-            if (code === "1234") {
-                loginUser();
-            } else {
-                alert("Неверный код! Попробуйте 1234");
-            }
+        // Enter в поле кода
+        const codeInput = document.getElementById('code');
+        if (codeInput) {
+            codeInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') { e.preventDefault(); confirmOtp(); }
+            });
         }
 
-        function loginUser() {
+        // Восстановление сессии
+        const savedEmail = localStorage.getItem('userEmail');
+        if (savedEmail) {
+            userEmail = savedEmail;
             document.getElementById('auth-box').style.display = 'none';
             document.getElementById('user-dashboard').style.display = 'block';
-            document.getElementById('user-greeting').innerText = `Здравствуйте, ${userPhone}!`;
+            document.getElementById('user-greeting').innerText = `Здравствуйте, ${savedEmail}!`;
             updatePoints();
             document.getElementById('login-nav').style.display = 'none';
         }
+    });
 
-        // --- LOGIC: POINTS & LOCALSTORAGE ---
-        function updatePoints() {
-            let points = localStorage.getItem('userPoints') || 0;
-            document.getElementById('user-points').innerText = `${points} баллов`;
+    // --- Шаг 1: запрос OTP-кода ---
+    async function requestOtp() {
+        const email = document.getElementById('email').value.trim();
+        if (!email) {
+            alert('Введите корректный e‑mail');
+            return;
         }
 
-        function addPoints(amount) {
-            let points = parseInt(localStorage.getItem('userPoints') || 0);
-            points += amount;
-            localStorage.setItem('userPoints', points);
+        try {
+            // Используем supabaseClient
+            const { error } = await supabaseClient.auth.signInWithOtp({ email: email });
+            if (error) throw error;
+
+            userEmail = email;
+            document.getElementById('step-1').style.display = 'none';
+            document.getElementById('step-2').style.display = 'block';
+            document.getElementById('code').focus();
+            alert('Код отправлен на ваш e‑mail! Проверьте почту (и спам).');
+        } catch (error) {
+            console.error('Ошибка при отправке кода:', error);
+            alert('Ошибка: ' + error.message);
+        }
+    }
+
+    // --- Шаг 2: подтверждение OTP-кода ---
+    async function confirmOtp() {
+        const code = document.getElementById('code').value.trim();
+        if (!code) {
+            alert('Введите код');
+            return;
+        }
+
+        try {
+            // Используем supabaseClient
+            const { data, error } = await supabaseClient.auth.verifyOtp({
+                email: userEmail,
+                token: code,
+                type: 'email'
+            });
+
+            if (error) throw error;
+
+            // Успешный вход
+            localStorage.setItem('userEmail', userEmail);
+            document.getElementById('auth-box').style.display = 'none';
+            document.getElementById('user-dashboard').style.display = 'block';
+            document.getElementById('user-greeting').innerText = `Здравствуйте, ${userEmail}!`;
             updatePoints();
+            document.getElementById('login-nav').style.display = 'none';
+            alert('✅ Вход выполнен успешно!');
+        } catch (error) {
+            console.error('Ошибка подтверждения:', error);
+            alert('Неверный код или ошибка: ' + error.message);
         }
+    }
 
-        // --- Функция для извлечения уникального идентификатора чека из QR-кода ---
-        function getUniqueCheckId(qrText) {
-            try {
-                // Парсим строку как URL-параметры (если они есть)
-                const params = new URLSearchParams(qrText);
-                
-                // Собираем ключевые поля (если они есть)
-                const fn = params.get('fn') || '';
-                const i = params.get('i') || '';
-                const fp = params.get('fp') || '';
-                const t = params.get('t') || '';
-                const s = params.get('s') || '';
-                
-                // Если есть хотя бы fn и i и fp — формируем ключ
-                if (fn && i && fp) {
-                    return `${fn}_${i}_${fp}`;
-                }
-                
-                // Если нет — используем весь текст как ключ (обрезаем до 100 символов)
-                return qrText.substring(0, 100);
-            } catch (e) {
-                // Если не удалось распарсить — используем весь текст
-                return qrText.substring(0, 100);
+    // Выход (можно добавить кнопку позже)
+    async function logout() {
+        await supabaseClient.auth.signOut();
+        localStorage.clear();
+        location.reload();
+    }
+
+    // ==================== POINTS & STORAGE ====================
+    function updatePoints() {
+        const points = localStorage.getItem('userPoints') || 0;
+        document.getElementById('user-points').innerText = `${points} баллов`;
+    }
+    function addPoints(amount) {
+        let pts = parseInt(localStorage.getItem('userPoints') || 0);
+        pts += amount;
+        localStorage.setItem('userPoints', pts);
+        updatePoints();
+    }
+
+    // ==================== QR / FILE (без изменений) ====================
+    function getUniqueCheckId(qrText) {
+        try {
+            const p = new URLSearchParams(qrText);
+            const fn = p.get('fn') || '';
+            const i = p.get('i') || '';
+            const fp = p.get('fp') || '';
+            if (fn && i && fp) return `${fn}_${i}_${fp}`;
+            return qrText.substring(0, 100);
+        } catch (e) { return qrText.substring(0, 100); }
+    }
+
+    async function handleFileUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const html5QrCode = new Html5Qrcode('reader');
+        try {
+            const decodedText = await html5QrCode.scanFile(file, true);
+            const checkId = getUniqueCheckId(decodedText);
+            const loaded = JSON.parse(localStorage.getItem('loadedChecks') || '[]');
+            if (loaded.includes(checkId)) {
+                alert('⚠️ Этот чек уже был загружен ранее! Баллы не начислены.');
+                return;
             }
+            loaded.push(checkId);
+            localStorage.setItem('loadedChecks', JSON.stringify(loaded));
+            alert(`✅ QR‑код распознан!\nТекст: ${decodedText}\n\n+10 баллов`);
+            addPoints(10);
+        } catch (err) {
+            alert('❌ QR‑код не найден на изображении.');
+        } finally {
+            event.target.value = '';
         }
+    }
 
-        // --- LOGIC: FILE UPLOAD & QR RECOGNITION (с защитой от повторов) ---
-        async function handleFileUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+    function manualInput() {
+        const checkNum = prompt('Введите номер чека:');
+        if (!checkNum) return;
+        const checkId = checkNum.trim();
+        const loaded = JSON.parse(localStorage.getItem('loadedChecks') || '[]');
+        if (loaded.includes(checkId)) {
+            alert('⚠️ Этот чек уже был загружен ранее! Баллы не начислены.');
+            return;
+        }
+        loaded.push(checkId);
+        localStorage.setItem('loadedChecks', JSON.stringify(loaded));
+        alert('⏳ Проверка номера...');
+        setTimeout(() => { alert('✅ Чек найден! +10 баллов'); addPoints(10); }, 1000);
+    }
 
-            const html5QrCode = new Html5Qrcode("reader");
-
-            try {
-                const decodedText = await html5QrCode.scanFile(file, true);
-                
-                // Извлекаем уникальный идентификатор чека
+    function startScanner() {
+        const html5QrCode = new Html5Qrcode('reader');
+        html5QrCode.start(
+            { facingMode: 'environment' },
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            decodedText => {
                 const checkId = getUniqueCheckId(decodedText);
-                
-                // Проверяем, не загружали ли уже этот чек
-                const loadedChecks = JSON.parse(localStorage.getItem('loadedChecks') || '[]');
-                if (loadedChecks.includes(checkId)) {
-                    alert("⚠️ Этот чек уже был загружен ранее! Баллы не начислены.");
-                    return;
-                }
-                
-                // Сохраняем идентификатор в список загруженных чеков
-                loadedChecks.push(checkId);
-                localStorage.setItem('loadedChecks', JSON.stringify(loadedChecks));
-                
-                alert(`✅ QR-код успешно распознан из файла!\nТекст: ${decodedText}\n\nВам начислено 10 баллов.`);
-                addPoints(10);
-            } catch (err) {
-                alert("❌ QR-код не найден на изображении. Пожалуйста, убедитесь, что фото четкое и QR-код виден полностью.");
-            } finally {
-                event.target.value = "";
-            }
-        }
-
-        // --- LOGIC: MANUAL INPUT (с защитой от повторов) ---
-        function manualInput() {
-            const checkNum = prompt("Введите номер чека:");
-            if (checkNum) {
-                const checkId = checkNum.trim();
-                const loadedChecks = JSON.parse(localStorage.getItem('loadedChecks') || '[]');
-                if (loadedChecks.includes(checkId)) {
-                    alert("⚠️ Этот чек уже был загружен ранее! Баллы не начислены.");
-                    return;
-                }
-                loadedChecks.push(checkId);
-                localStorage.setItem('loadedChecks', JSON.stringify(loadedChecks));
-
-                alert("⏳ Проверка номера...");
-                setTimeout(() => {
-                    alert("✅ Чек найден! Вам начислено 10 баллов.");
-                    addPoints(10);
-                }, 1000);
-            }
-        }
-
-        // --- LOGIC: CAMERA SCANNER (с защитой от повторов) ---
-        function startScanner() {
-            const html5QrCode = new Html5Qrcode("reader");
-            html5QrCode.start(
-                { facingMode: "environment" },
-                { fps: 10, qrbox: { width: 250, height: 250 } },
-                (decodedText) => {
-                    // Извлекаем уникальный идентификатор чека
-                    const checkId = getUniqueCheckId(decodedText);
-                    
-                    // Проверяем, не загружали ли уже этот чек
-                    const loadedChecks = JSON.parse(localStorage.getItem('loadedChecks') || '[]');
-                    if (loadedChecks.includes(checkId)) {
-                        alert("⚠️ Этот чек уже был загружен ранее! Баллы не начислены.");
-                        html5QrCode.stop();
-                        return;
-                    }
-                    
-                    // Сохраняем идентификатор в список загруженных чеков
-                    loadedChecks.push(checkId);
-                    localStorage.setItem('loadedChecks', JSON.stringify(loadedChecks));
-                    
-                    alert(`✅ QR-код успешно считан через камеру!\nТекст: ${decodedText}\n\nВам начислено 10 баллов.`);
-                    addPoints(10);
+                const loaded = JSON.parse(localStorage.getItem('loadedChecks') || '[]');
+                if (loaded.includes(checkId)) {
+                    alert('⚠️ Этот чек уже был загружен ранее! Баллы не начислены.');
                     html5QrCode.stop();
-                },
-                (errorMessage) => {
-                    // ignore errors
+                    return;
                 }
-            ).catch(err => alert("❌ Ошибка доступа к камере: " + err));
-        }
-    </script>
+                loaded.push(checkId);
+                localStorage.setItem('loadedChecks', JSON.stringify(loaded));
+                alert(`✅ QR‑код считан!\nТекст: ${decodedText}\n\n+10 баллов`);
+                addPoints(10);
+                html5QrCode.stop();
+            },
+            errMsg => { /* игнорируем */ }
+        ).catch(err => alert('❌ Ошибка доступа к камере: ' + err));
+    }
+</script>
 </body>
-
 </html>
