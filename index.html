@@ -13,6 +13,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
+        /* --- основные стили (без изменений) --- */
         :root {
             --primary-blue: #1a3a5c;
             --primary-red: #d0021b;
@@ -227,8 +228,28 @@
             font-weight: 700;
             cursor: pointer;
             transition: var(--transition);
+            position: relative;
         }
         .auth-btn:hover { background: #112b45; }
+        .auth-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        /* --- Спиннер (анимация загрузки) --- */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
         /* --- USER DASHBOARD --- */
         #user-dashboard {
             display: none;
@@ -236,6 +257,9 @@
             margin: 0 auto;
             text-align: center;
             background: var(--white);
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
         }
         .welcome-box {
             background: var(--white);
@@ -250,6 +274,48 @@
             color: var(--primary-red);
             margin: 15px 0;
         }
+        .receipt-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .stat-item {
+            background: var(--light-bg);
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        .stat-item span {
+            font-size: 1.5rem;
+            display: block;
+            color: var(--primary-blue);
+        }
+        .receipt-history {
+            text-align: left;
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        .receipt-history h4 {
+            margin-bottom: 10px;
+            color: var(--primary-blue);
+        }
+        .receipt-history ul {
+            list-style: none;
+            padding: 0;
+        }
+        .receipt-history li {
+            padding: 8px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+        .receipt-history li:last-child { border-bottom: none; }
+        .receipt-history .date { color: #888; }
+        .receipt-history .points { color: var(--primary-red); font-weight: 600; }
         .upload-options {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -270,7 +336,20 @@
             background: #eef2f7;
             border-style: solid;
         }
+        .upload-btn.loading {
+            background: #d0d8e0;
+            border-style: solid;
+            cursor: wait;
+            opacity: 0.7;
+        }
         #reader { width: 100%; max-width: 500px; margin: 20px auto; }
+        .logout-btn {
+            margin-top: 30px;
+            background: var(--primary-red) !important;
+        }
+        .logout-btn:hover {
+            background: #b00218 !important;
+        }
         /* --- FOOTER --- */
         footer {
             position: relative;
@@ -321,6 +400,7 @@
             .burger { display: flex; }
             .hero h1 { font-size: 2.2rem; }
             section { padding: 60px 5%; }
+            .receipt-stats { flex-direction: column; align-items: center; }
         }
     </style>
 </head>
@@ -398,24 +478,38 @@
     </div>
 
     <div id="user-dashboard">
-    <div class="welcome-box">
-        <h2 id="user-greeting">Привет!</h2>
-        <p>Ваш текущий баланс:</p>
-        <div class="points-badge" id="user-points">0 баллов</div>
-    </div>
+        <div class="welcome-box">
+            <h2 id="user-greeting">Привет!</h2>
+            <p>Ваш текущий баланс:</p>
+            <div class="points-badge" id="user-points">0 баллов</div>
+        </div>
 
-    <h3 style="margin-bottom:20px;">Загрузить новый чек</h3>
-    <div class="upload-options">
-        <div class="upload-btn" onclick="startScanner()">📷 Сканировать QR‑код</div>
-        <div class="upload-btn" onclick="document.getElementById('file-input').click()">🖼️ Загрузить фото</div>
-        <div class="upload-btn" onclick="manualInput()">✍️ Ввести вручную</div>
-    </div>
-    <input type="file" id="file-input" style="display:none;" accept="image/png,image/jpeg,image/webp" onchange="handleFileUpload(event)">
-    <div id="reader"></div>
+        <!-- СТАТИСТИКА ПО ЧЕКАМ -->
+        <div class="receipt-stats">
+            <div class="stat-item">📄 Всего чеков <span id="receipt-count">0</span></div>
+            <div class="stat-item">⭐ Всего баллов <span id="total-points">0</span></div>
+        </div>
 
-    <!-- Кнопка выхода -->
-    <button class="auth-btn" onclick="logout()" style="margin-top: 30px; background: var(--primary-red);">🚪 Выйти</button>
-</div>
+        <h3 style="margin-bottom:20px;">Загрузить новый чек</h3>
+        <div class="upload-options">
+            <div class="upload-btn" id="scan-btn" onclick="startScanner()">📷 Сканировать QR‑код</div>
+            <div class="upload-btn" id="upload-btn" onclick="document.getElementById('file-input').click()">🖼️ Загрузить фото</div>
+            <div class="upload-btn" id="manual-btn" onclick="manualInput()">✍️ Ввести вручную</div>
+        </div>
+        <input type="file" id="file-input" style="display:none;" accept="image/png,image/jpeg,image/webp" onchange="handleFileUpload(event)">
+        <div id="reader"></div>
+
+        <!-- ИСТОРИЯ ЧЕКОВ -->
+        <div class="receipt-history">
+            <h4>📜 История загрузок</h4>
+            <ul id="history-list">
+                <li style="text-align:center; color:#999;">Пока нет загруженных чеков</li>
+            </ul>
+        </div>
+
+        <!-- Кнопка выхода -->
+        <button class="auth-btn logout-btn" onclick="logout()">🚪 Выйти</button>
+    </div>
 </section>
 
 <!-- FOOTER -->
@@ -437,8 +531,6 @@
     // ==================== SUPABASE CLIENT ====================
     const SUPABASE_URL = 'https://axavmdnytvkjyjyytgsy.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_Rpb8DobkahQP6NBuWcoDaQ_BTp5eMH3';
-
-    // Переименовали переменную, чтобы избежать конфликта с глобальным supabase из CDN
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // ==================== UI HELPERS ====================
@@ -454,14 +546,12 @@
     let userEmail = '';
 
     document.addEventListener('DOMContentLoaded', function() {
-        // Закрытие меню при клике
         document.querySelectorAll('#main-nav a').forEach(l => {
             l.addEventListener('click', () => {
                 document.getElementById('main-nav').classList.remove('open');
             });
         });
 
-        // Enter в поле email
         const emailInput = document.getElementById('email');
         if (emailInput) {
             emailInput.addEventListener('keydown', e => {
@@ -469,7 +559,6 @@
             });
         }
 
-        // Enter в поле кода
         const codeInput = document.getElementById('code');
         if (codeInput) {
             codeInput.addEventListener('keydown', e => {
@@ -484,24 +573,20 @@
             document.getElementById('auth-box').style.display = 'none';
             document.getElementById('user-dashboard').style.display = 'block';
             document.getElementById('user-greeting').innerText = `Здравствуйте, ${savedEmail}!`;
-            updatePoints();
+            updateDashboard();
             document.getElementById('login-nav').style.display = 'none';
         }
     });
 
-    // --- Шаг 1: запрос OTP-кода ---
     async function requestOtp() {
         const email = document.getElementById('email').value.trim();
         if (!email) {
             alert('Введите корректный e‑mail');
             return;
         }
-
         try {
-            // Используем supabaseClient
             const { error } = await supabaseClient.auth.signInWithOtp({ email: email });
             if (error) throw error;
-
             userEmail = email;
             document.getElementById('step-1').style.display = 'none';
             document.getElementById('step-2').style.display = 'block';
@@ -513,30 +598,24 @@
         }
     }
 
-    // --- Шаг 2: подтверждение OTP-кода ---
     async function confirmOtp() {
         const code = document.getElementById('code').value.trim();
         if (!code) {
             alert('Введите код');
             return;
         }
-
         try {
-            // Используем supabaseClient
             const { data, error } = await supabaseClient.auth.verifyOtp({
                 email: userEmail,
                 token: code,
                 type: 'email'
             });
-
             if (error) throw error;
-
-            // Успешный вход
             localStorage.setItem('userEmail', userEmail);
             document.getElementById('auth-box').style.display = 'none';
             document.getElementById('user-dashboard').style.display = 'block';
             document.getElementById('user-greeting').innerText = `Здравствуйте, ${userEmail}!`;
-            updatePoints();
+            updateDashboard();
             document.getElementById('login-nav').style.display = 'none';
             alert('✅ Вход выполнен успешно!');
         } catch (error) {
@@ -545,26 +624,54 @@
         }
     }
 
-    // Выход (можно добавить кнопку позже)
     async function logout() {
         await supabaseClient.auth.signOut();
         localStorage.clear();
         location.reload();
     }
 
-    // ==================== POINTS & STORAGE ====================
-    function updatePoints() {
-        const points = localStorage.getItem('userPoints') || 0;
+    // ==================== DASHBOARD UPDATE ====================
+    function updateDashboard() {
+        const points = parseInt(localStorage.getItem('userPoints') || 0);
         document.getElementById('user-points').innerText = `${points} баллов`;
+        document.getElementById('total-points').innerText = points;
+
+        // Счётчик чеков
+        const checks = JSON.parse(localStorage.getItem('loadedChecks') || '[]');
+        document.getElementById('receipt-count').innerText = checks.length;
+
+        // История чеков (из отдельного хранилища)
+        const history = JSON.parse(localStorage.getItem('receiptHistory') || '[]');
+        const historyList = document.getElementById('history-list');
+        historyList.innerHTML = '';
+        if (history.length === 0) {
+            historyList.innerHTML = '<li style="text-align:center; color:#999;">Пока нет загруженных чеков</li>';
+        } else {
+            // Показываем последние 5 записей (самые новые сверху)
+            const recent = history.slice(-5).reverse();
+            recent.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span>${item.date}</span><span class="points">+${item.points} баллов</span>`;
+                historyList.appendChild(li);
+            });
+        }
     }
+
     function addPoints(amount) {
         let pts = parseInt(localStorage.getItem('userPoints') || 0);
         pts += amount;
         localStorage.setItem('userPoints', pts);
-        updatePoints();
+        // Добавляем запись в историю
+        const history = JSON.parse(localStorage.getItem('receiptHistory') || '[]');
+        history.push({
+            date: new Date().toLocaleString('ru-RU'),
+            points: amount
+        });
+        localStorage.setItem('receiptHistory', JSON.stringify(history));
+        updateDashboard();
     }
 
-    // ==================== QR / FILE (без изменений) ====================
+    // ==================== QR / FILE HANDLING (с подсветкой кнопок) ====================
     function getUniqueCheckId(qrText) {
         try {
             const p = new URLSearchParams(qrText);
@@ -576,9 +683,32 @@
         } catch (e) { return qrText.substring(0, 100); }
     }
 
+    // Вспомогательная функция для показа спиннера на кнопке
+    function setButtonLoading(buttonId, loading) {
+        const btn = document.getElementById(buttonId);
+        if (!btn) return;
+        if (loading) {
+            btn.disabled = true;
+            btn.classList.add('loading');
+            btn.innerHTML = '<span class="spinner"></span> Загрузка...';
+        } else {
+            btn.disabled = false;
+            btn.classList.remove('loading');
+            // Восстанавливаем исходный текст (придётся сохранять, но для простоты)
+            // Мы будем просто заменять на стандартный текст, но можно сделать аккуратно.
+            // Так как у нас три кнопки, упростим: просто убираем спиннер.
+            // Лучше использовать data-атрибуты, но для демо сделаем так:
+            if (buttonId === 'scan-btn') btn.innerHTML = '📷 Сканировать QR‑код';
+            else if (buttonId === 'upload-btn') btn.innerHTML = '🖼️ Загрузить фото';
+            else if (buttonId === 'manual-btn') btn.innerHTML = '✍️ Ввести вручную';
+        }
+    }
+
     async function handleFileUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
+        const btn = document.getElementById('upload-btn');
+        setButtonLoading('upload-btn', true);
         const html5QrCode = new Html5Qrcode('reader');
         try {
             const decodedText = await html5QrCode.scanFile(file, true);
@@ -596,25 +726,34 @@
             alert('❌ QR‑код не найден на изображении.');
         } finally {
             event.target.value = '';
+            setButtonLoading('upload-btn', false);
         }
     }
 
     function manualInput() {
         const checkNum = prompt('Введите номер чека:');
         if (!checkNum) return;
-        const checkId = checkNum.trim();
-        const loaded = JSON.parse(localStorage.getItem('loadedChecks') || '[]');
-        if (loaded.includes(checkId)) {
-            alert('⚠️ Этот чек уже был загружен ранее! Баллы не начислены.');
-            return;
-        }
-        loaded.push(checkId);
-        localStorage.setItem('loadedChecks', JSON.stringify(loaded));
-        alert('⏳ Проверка номера...');
-        setTimeout(() => { alert('✅ Чек найден! +10 баллов'); addPoints(10); }, 1000);
+        const btn = document.getElementById('manual-btn');
+        setButtonLoading('manual-btn', true);
+        setTimeout(() => {
+            const checkId = checkNum.trim();
+            const loaded = JSON.parse(localStorage.getItem('loadedChecks') || '[]');
+            if (loaded.includes(checkId)) {
+                alert('⚠️ Этот чек уже был загружен ранее! Баллы не начислены.');
+                setButtonLoading('manual-btn', false);
+                return;
+            }
+            loaded.push(checkId);
+            localStorage.setItem('loadedChecks', JSON.stringify(loaded));
+            alert('✅ Чек найден! +10 баллов');
+            addPoints(10);
+            setButtonLoading('manual-btn', false);
+        }, 1500); // имитация проверки
     }
 
     function startScanner() {
+        const btn = document.getElementById('scan-btn');
+        setButtonLoading('scan-btn', true);
         const html5QrCode = new Html5Qrcode('reader');
         html5QrCode.start(
             { facingMode: 'environment' },
@@ -625,6 +764,7 @@
                 if (loaded.includes(checkId)) {
                     alert('⚠️ Этот чек уже был загружен ранее! Баллы не начислены.');
                     html5QrCode.stop();
+                    setButtonLoading('scan-btn', false);
                     return;
                 }
                 loaded.push(checkId);
@@ -632,10 +772,18 @@
                 alert(`✅ QR‑код считан!\nТекст: ${decodedText}\n\n+10 баллов`);
                 addPoints(10);
                 html5QrCode.stop();
+                setButtonLoading('scan-btn', false);
             },
             errMsg => { /* игнорируем */ }
-        ).catch(err => alert('❌ Ошибка доступа к камере: ' + err));
+        ).catch(err => {
+            alert('❌ Ошибка доступа к камере: ' + err);
+            setButtonLoading('scan-btn', false);
+        });
     }
+
+    // ==================== INIT ====================
+    // При загрузке обновляем дашборд, если пользователь залогинен
+    // (это уже делается в DOMContentLoaded)
 </script>
 </body>
 </html>
