@@ -398,20 +398,24 @@
     </div>
 
     <div id="user-dashboard">
-        <div class="welcome-box">
-            <h2 id="user-greeting">Привет!</h2>
-            <p>Ваш текущий баланс:</p>
-            <div class="points-badge" id="user-points">0 баллов</div>
-        </div>
-        <h3 style="margin-bottom:20px;">Загрузить новый чек</h3>
-        <div class="upload-options">
-            <div class="upload-btn" onclick="startScanner()">📷 Сканировать QR‑код</div>
-            <div class="upload-btn" onclick="document.getElementById('file-input').click()">🖼️ Загрузить фото</div>
-            <div class="upload-btn" onclick="manualInput()">✍️ Ввести вручную</div>
-        </div>
-        <input type="file" id="file-input" style="display:none;" accept="image/png,image/jpeg,image/webp" onchange="handleFileUpload(event)">
-        <div id="reader"></div>
+    <div class="welcome-box">
+        <h2 id="user-greeting">Привет!</h2>
+        <p>Ваш текущий баланс:</p>
+        <div class="points-badge" id="user-points">0 баллов</div>
     </div>
+
+    <h3 style="margin-bottom:20px;">Загрузить новый чек</h3>
+    <div class="upload-options">
+        <div class="upload-btn" onclick="startScanner()">📷 Сканировать QR‑код</div>
+        <div class="upload-btn" onclick="document.getElementById('file-input').click()">🖼️ Загрузить фото</div>
+        <div class="upload-btn" onclick="manualInput()">✍️ Ввести вручную</div>
+    </div>
+    <input type="file" id="file-input" style="display:none;" accept="image/png,image/jpeg,image/webp" onchange="handleFileUpload(event)">
+    <div id="reader"></div>
+
+    <!-- Кнопка выхода -->
+    <button class="auth-btn" onclick="logout()" style="margin-top: 30px; background: var(--primary-red);">🚪 Выйти</button>
+</div>
 </section>
 
 <!-- FOOTER -->
